@@ -29,7 +29,7 @@ export function PayPalCheckout() {
   const [isProcessing, setIsProcessing] = useState(false);
 
   // PayPal Client ID（Sandbox / Live の切り替え）
-  const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID_SANDBOX;
+  const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
 
   if (!clientId) {
     return (

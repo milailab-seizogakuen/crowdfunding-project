@@ -5,36 +5,30 @@
  */
 
 // 環境設定
-const isProduction = process.env.NODE_ENV === 'production';
+// const isProduction = process.env.NODE_ENV === 'production';
 
-// PayPal API のベースURLを環境に応じて切り替え
-const PAYPAL_API_BASE = isProduction
-  ? 'https://api-m.paypal.com'
-  : 'https://api.sandbox.paypal.com';
+// PayPal API のベースURL（常に本番用）
+const PAYPAL_API_BASE = 'https://api-m.paypal.com';
 
 /**
  * PayPal OAuth 2.0 アクセストークンを取得
  */
 export async function getPayPalAccessToken(): Promise<string> {
-  // 環境に応じた認証情報を選択
-  const clientId = isProduction
-    ? process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID
-    : process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID_SANDBOX;
-  const clientSecret = isProduction
-    ? process.env.PAYPAL_SECRET_LIVE
-    : process.env.PAYPAL_SECRET_SANDBOX;
+  // 常に本番用の認証情報を使用
+  const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
+  const clientSecret = process.env.PAYPAL_SECRET;
 
   if (!clientId || !clientSecret) {
-    throw new Error('PayPal credentials not set for the current environment.');
+    throw new Error('PayPal credentials not set.');
   }
 
   try {
-    console.log(`🔐 Requesting PayPal access token for ${isProduction ? 'Live' : 'Sandbox'}...`);
-    
+    console.log('🔐 Requesting PayPal access token...');
+
     const auth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
 
     const response = await fetch(
-      `${PAYPAL_API_BASE}/v1/oauth2/token`, // URLを動的に設定
+      `${PAYPAL_API_BASE}/v1/oauth2/token`,
       {
         method: 'POST',
         headers: {
@@ -93,10 +87,10 @@ export async function capturePayPalOrder(orderId: string): Promise<any> {
     }
 
     const data = await response.json();
-    
+
     console.log('✅ Full PayPal capture response:', JSON.stringify(data, null, 2));
     console.log(`✅ PayPal order captured: ${data.id} (${data.status})`);
-    
+
     return data;
   } catch (error) {
     console.error('❌ Error capturing PayPal order:', error);
