@@ -3,6 +3,12 @@
 import { Contract, BrowserProvider, isAddress, TypedDataEncoder } from 'ethers';
 import { JPYC_ABI } from './abi';
 
+declare global {
+  interface Window {
+    ethereum?: any;
+  }
+}
+
 const JPYC_TOKEN_ADDRESS = process.env.NEXT_PUBLIC_JPYC_TOKEN_ADDRESS || '0xE7C3D8C9a439feDe00D2600032D5dB0Be71C3c29';
 
 interface PermitSignatureResult {
@@ -121,10 +127,10 @@ export const jpycService = {
 
       console.log(`✅ 署名分解: v=${v}, r=${r.slice(0, 10)}..., s=${s.slice(0, 10)}...`);
 
-      return { 
-        v, 
-        r, 
-        s, 
+      return {
+        v,
+        r,
+        s,
         nonce: nonceString,
         signature: signature  // 署名全体も含める（デバッグ用）
       };

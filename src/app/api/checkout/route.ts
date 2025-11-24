@@ -108,8 +108,10 @@ export async function POST(request: NextRequest) {
     }
 
     // --- データ構築 ---
+    const backerId = `B${Date.now()}`; // API で自動生成
+
     const backerData: BackerData = {
-      backer_id: '', // API で自動生成
+      backer_id: backerId,
       name: backer.name,
       email: backer.email,
       phone_number: backer.phone_number || undefined,
@@ -122,7 +124,7 @@ export async function POST(request: NextRequest) {
     };
 
     const backingData: Omit<BackingData, 'backing_id'> = {
-      backer_id: '', // API で自動生成
+      backer_id: backerId,
       backing_date: new Date().toISOString(),
       total_amount: Number(backing.total_amount),
       payment_method: backing.payment_method,
@@ -163,7 +165,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Google Sheets APIエラーの可能性を示唆
-    const errorMessage = error instanceof Error 
+    const errorMessage = error instanceof Error
       ? `Failed to create order. Please check Google Sheets API connection and permissions. Details: ${error.message}`
       : 'An unknown error occurred while creating the order.';
 

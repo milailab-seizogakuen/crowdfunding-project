@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useBackingContext } from '@/context/BackingContext';
@@ -12,7 +12,7 @@ import { PayPalCheckout } from '@/components/PayPalCheckout';
  * - PayPal Checkout Integration
  * - 決済後に確認ページへ遷移
  */
-export default function PayPalCheckoutPage() {
+function PayPalCheckoutContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { selectedRewards, totalAmount: contextAmount, backer } = useBackingContext();
@@ -207,5 +207,22 @@ export default function PayPalCheckoutPage() {
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function PayPalCheckoutPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="inline-block">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          </div>
+          <p className="mt-4 text-gray-600">読み込み中...</p>
+        </div>
+      </div>
+    }>
+      <PayPalCheckoutContent />
+    </Suspense>
   );
 }

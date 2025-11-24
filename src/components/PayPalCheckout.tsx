@@ -5,8 +5,6 @@ import { useRouter } from 'next/navigation';
 import {
   PayPalScriptProvider,
   PayPalButtons,
-  OnApproveData,
-  CreateOrderData,
 } from '@paypal/react-paypal-js';
 import { useBackingContext } from '@/context/BackingContext';
 
@@ -103,13 +101,13 @@ export function PayPalCheckout() {
           </div>
 
           <PayPalButtons
-            createOrder={async (data: CreateOrderData, actions) => {
+            createOrder={async (data: any, actions) => {
               try {
                 setIsLoading(true);
                 setError(null);
 
                 const orderData = {
-                  intent: 'CAPTURE',
+                  intent: 'CAPTURE' as const,
                   purchase_units: [
                     {
                       amount: {
@@ -134,7 +132,7 @@ export function PayPalCheckout() {
                 setIsLoading(false);
               }
             }}
-            onApprove={async (data: OnApproveData) => {
+            onApprove={async (data: any) => {
               try {
                 setIsProcessing(true);
                 setError(null);
@@ -205,7 +203,7 @@ export function PayPalCheckout() {
                 setIsProcessing(false);
               }
             }}
-            onError={(err) => {
+            onError={(err: any) => {
               const errorMessage =
                 err?.message || '予期しないエラーが発生しました';
               setError(errorMessage);

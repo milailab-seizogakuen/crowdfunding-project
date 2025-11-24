@@ -62,7 +62,10 @@ export async function POST(request: NextRequest) {
     // ステップ2: Google Sheets に支援情報を保存
     console.log('\n✅ STEP 2: Saving to Google Sheets...');
 
+    const backerId = `B${Date.now()}`;
+
     const backerData: BackerData = {
+      backer_id: backerId,
       name,
       email,
       phone_number: phone_number || undefined,
@@ -75,6 +78,7 @@ export async function POST(request: NextRequest) {
     };
 
     const backingData: Omit<BackingData, 'backing_id'> = {
+      backer_id: backerId,
       backing_date: new Date().toISOString(),
       total_amount: totalAmount,
       payment_method: 'paypal',
@@ -85,7 +89,7 @@ export async function POST(request: NextRequest) {
       notes: `PayPal Payment - Order ID: ${orderId}`,
     };
 
-    const backingItems = selectedRewards.map((reward) => ({
+    const backingItems = selectedRewards.map((reward: any) => ({
       reward_id: reward.reward_id,
       quantity: reward.quantity,
       unit_price: reward.unit_price,

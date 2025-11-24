@@ -1,14 +1,13 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { useBackingContext } from '@/context/BackingContext'; // ★修正: useBackingContext をインポート
+import { useEffect, useState, Suspense } from 'react';
+import { useBackingContext } from '@/context/BackingContext';
 import Link from 'next/link';
 
-export default function ConfirmationPage() {
+function ConfirmationContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  // ★修正: useContext(BackingContext) を useBackingContext() に変更
   const { selectedRewards, clearRewards } = useBackingContext();
 
   const [backing_id, setBacking_id] = useState<string | null>(null);
@@ -22,10 +21,10 @@ export default function ConfirmationPage() {
     const backer_id_param = searchParams.get('backer_id');
     const amount_param = searchParams.get('amount');
 
-    if (backing_id_param) { // backer_id はオプショナルかもしれないので、backing_idのみチェック
+    if (backing_id_param) {
       setBacking_id(backing_id_param);
-      if(backer_id_param) setBacker_id(backer_id_param);
-      if(amount_param) setTotalAmount(parseInt(amount_param));
+      if (backer_id_param) setBacker_id(backer_id_param);
+      if (amount_param) setTotalAmount(parseInt(amount_param));
       setIsLoading(false);
     } else {
       // パラメータがない場合は ホームページにリダイレクト
@@ -184,5 +183,22 @@ export default function ConfirmationPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ConfirmationPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 to-slate-100">
+        <div className="text-center">
+          <div className="inline-block">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          </div>
+          <p className="mt-4 text-slate-600">読み込み中...</p>
+        </div>
+      </div>
+    }>
+      <ConfirmationContent />
+    </Suspense>
   );
 }
