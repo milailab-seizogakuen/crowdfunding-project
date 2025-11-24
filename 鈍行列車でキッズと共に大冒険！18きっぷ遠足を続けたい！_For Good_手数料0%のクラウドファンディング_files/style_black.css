@@ -1,0 +1,207 @@
+body{
+  margin: 0;
+}
+
+footer {
+  width: 100%;
+}
+
+.footer-common-borderless {
+  font-family: "游ゴシック", "YuGothic", "MS Pゴシック", sans-serif;
+}
+
+.vsp {display: block;}
+@media screen and (min-width: 64em) {
+  .vsp {display: none;}
+}
+
+
+.footer-logoWhite {
+  padding: 15px 0 15px;
+  margin-top: 45px;
+}
+@media screen and (min-width: 64em) {
+  .footer-logoWhite {
+    margin-top: 30px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    grid-column-gap: 15px;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+  }
+}
+.footer-logoWhite__img {
+  width: 210px;
+  height: auto;
+  -webkit-box-align: left;
+      -ms-flex-align: left;
+          align-items: left;
+}
+@media screen and (min-width: 64em) {
+  .footer-logoWhite__img {
+    height: 27px;
+    width: auto;
+    margin-top: 5.2px;
+  }
+}
+.footer-logoWhite__txtsub {
+  color: #FFF;
+  font-size: 11px;
+  text-align: left;
+  display: block;
+  letter-spacing: 0.05rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+@media screen and (min-width: 64em) {
+  .footer-logoWhite__txtsub {
+    font-size: 11px;
+    line-height: 1.4;
+    padding-top: 3px;
+  }
+}
+.footer-common-borderless {
+  padding: 0.75rem 0 10rem;
+  background: #2F2725;
+}
+.footer-common-borderless-inner {
+  width: 90%;
+  max-width: 1024px;
+  margin: auto;
+}
+@media screen and (min-width: 64em) {
+  .footer-common-borderless-inner {
+    width: 85%;
+  }
+}
+.footer-linksCorp {
+  border-top: 2px solid #303030;
+  padding: 1.8rem 0 30px;
+  grid-row-gap: 7px;
+}
+@media screen and (min-width: 64em) {
+  .footer-linksCorp {
+    display: -ms-grid;
+    display: grid;
+    -ms-grid-columns: 50% 50%;
+    grid-template-columns: 50% 50%;
+  }
+}
+.footer-linksCorp__content {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 29% 72%;
+  grid-template-columns: 29% 72%;
+  margin-bottom: 6px;
+  grid-column-gap: 5px;
+}
+@media screen and (min-width: 64em) {
+  .footer-linksCorp__content {
+    display: -ms-grid;
+    display: grid;
+    -ms-grid-columns: 23% 76%;
+    grid-template-columns: 23% 76%;
+    margin: 0 30px 0px 0;
+    grid-column-gap: 3px;
+  }
+}
+.footer-linksCorp__content__category {
+  color: #2F2725;
+  font-size: 11px;
+  text-align: center;
+  display: block;
+  letter-spacing: 0.025rem;
+  width: 100%;
+  font-weight: 600;
+  opacity: 90%;
+  line-height: 21px;
+}
+@media screen and (min-width: 64em) {
+  .footer-linksCorp__content__category {
+    font-size: 11px;
+    line-height: 20px;
+  }
+}
+.footer-linksCorp__content__list {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: left;
+      -ms-flex-pack: left;
+          justify-content: left;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  line-height: 19px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  font-size: 100%;
+  vertical-align: baseline;
+  background: 0 0;
+  font-weight: 400;
+}
+@media screen and (min-width: 64em) {
+  .footer-linksCorp__content__list {
+    line-height: 18px;
+  }
+}
+.footer-linksCorp__content__list_cat_name {
+  background: #ffffff;
+  height: 20px;
+  width: 100%;
+  border-radius: 50px;
+  opacity: 0.9;
+  margin-top: 1px;
+}
+@media screen and (min-width: 64em) {
+  .footer-linksCorp__content__list_cat_name {
+    height: 19px;
+    margin-top: 0;
+    opacity: 0.85;
+  }
+}
+.footer-linksCorp__item {
+  display: block;
+  padding: 0 0.6rem 0 0.6rem;
+  position: relative;
+  vertical-align: middle;
+}
+@media screen and (min-width: 64em) {
+  .footer-linksCorp__item {
+    padding: 0 0.7rem 0 0.7rem;
+  }
+}
+.footer-linksCorp__item::after {
+  content: "";
+  width: 0.1rem;
+  height: 0.9em;
+  top: 3px;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  background-color: #525252;
+}
+.footer-linksCorp__item:last-child::after {
+  content: none;
+}
+.footer-linksCorp__link {
+  color: #FFF;
+  font-size: 12px;
+  text-align: left;
+  display: block;
+  letter-spacing: 0.02rem;
+  width: auto;
+  padding: 0;
+  font-weight: 300;
+  opacity: 90%;
+  line-height: 1.75;
+}
+@media screen and (min-width: 64em) {
+  .footer-linksCorp__link {
+    font-size: 12px;
+    line-height: 1.6;
+  }
+}
