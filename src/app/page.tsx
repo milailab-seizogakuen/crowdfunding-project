@@ -92,10 +92,10 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <img
-                src="https://i.imgur.com/Xg72KDR.png"
-                alt="NEXT RAIL logo"
-                className="h-11 w-auto"
-                style={{ aspectRatio: '4 / 1' }}
+                src="https://i.imgur.com/92eVr1d.jpeg"
+                alt="NEXT RAIL"
+                className="h-14 w-auto"
+                style={{ aspectRatio: '2 / 1' }}
               />
             </div>
             <nav className="hidden md:flex gap-8">
@@ -145,7 +145,7 @@ export default function Home() {
               {dashboard && dashboard.remainingAmount !== undefined && (
                 <Link
                   href="/backing"
-                  className="w-full bg-orange-500 text-white py-4 rounded-lg font-bold text-lg hover:bg-orange-600 transition-all shadow-lg block text-center mt-4"
+                  className="w-full bg-blue-600 text-white py-4 rounded-lg font-bold text-lg hover:bg-blue-700 transition-all shadow-lg block text-center mt-4"
                 >
                   今すぐ支援する
                 </Link>
@@ -226,7 +226,7 @@ export default function Home() {
             {dashboard && dashboard.remainingAmount !== undefined && (
               <Link
                 href="/backing"
-                className="w-full bg-orange-500 text-white py-4 rounded-lg font-bold text-lg hover:bg-orange-600 transition-all shadow-lg block text-center"
+                className="w-full bg-blue-600 text-white py-4 rounded-lg font-bold text-lg hover:bg-blue-700 transition-all shadow-lg block text-center"
               >
                 今すぐ支援する
               </Link>
@@ -251,10 +251,10 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div>
               <img
-                src="https://i.imgur.com/91k5WtN.png"
-                alt="18きっぷ遠足ロゴ"
-                className="h-11 w-auto mb-4"
-                style={{ aspectRatio: '4 / 1' }}
+                src="https://i.imgur.com/xrwq829.png"
+                alt="NEXT RAIL"
+                className="h-12 w-auto mb-4"
+                style={{ aspectRatio: '2 / 1' }}
               />
               <p className="text-sm">
                 AI時代における、「人間にしかできないこと」を探求する旅プロジェクト。

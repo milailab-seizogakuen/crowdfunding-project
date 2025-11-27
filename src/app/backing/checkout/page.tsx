@@ -152,9 +152,10 @@ export default function CheckoutPage() {
             <div className="flex items-center gap-3">
               <Link href="/" className="flex items-center gap-2">
                 <img
-                  src="https://i.imgur.com/91k5WtN.png"
-                  alt="18きっぷ遠足ロゴ"
-                  className="h-10 w-auto"
+                  src="https://i.imgur.com/92eVr1d.jpeg"
+                  alt="NEXT RAIL"
+                  className="h-14 w-auto"
+                  style={{ aspectRatio: '2 / 1' }}
                 />
               </Link>
             </div>

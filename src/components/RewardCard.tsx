@@ -89,7 +89,8 @@ export const RewardCard: React.FC<RewardCardProps> = ({
               max="99"
               value={quantity}
               onChange={handleQuantityChange}
-              className="w-20 px-3 py-2 border-2 border-gray-300 rounded-lg text-center font-semibold focus:border-blue-500 focus:outline-none transition"
+              className="w-20 px-3 py-2 border-2 border-gray-300 rounded-lg text-center font-semibold text-black placeholder-gray-500 focus:border-blue-500 focus:outline-none transition"
+              style={{ color: '#000000' }}
             />
             <span className="text-sm text-gray-600">個</span>
           </div>

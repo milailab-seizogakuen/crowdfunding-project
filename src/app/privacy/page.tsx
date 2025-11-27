@@ -2,7 +2,6 @@
 
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 
 export default function PrivacyPage() {
     return (
@@ -12,14 +11,12 @@ export default function PrivacyPage() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-16">
                         <Link href="/" className="flex items-center gap-3">
-                            <Image
-                                src="https://i.imgur.com/JnSQQvm.jpeg"
-                                alt="18きっぷ遠足ロゴ"
-                                width={50}
-                                height={50}
-                                className="rounded-full"
+                            <img
+                                src="https://i.imgur.com/92eVr1d.jpeg"
+                                alt="NEXT RAIL"
+                                className="h-14 w-auto"
+                                style={{ aspectRatio: '2 / 1' }}
                             />
-                            <span className="text-xl font-bold text-gray-900">18きっぷ遠足</span>
                         </Link>
                         <Link
                             href="/"

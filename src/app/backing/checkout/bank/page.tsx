@@ -28,8 +28,13 @@ export default function BankCheckoutPage() {
       <div className="min-h-screen bg-gray-50">
         <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <Link href="/" className="text-2xl font-bold text-blue-600 hover:text-blue-700">
-              🚄 NEXT RAIL
+            <Link href="/" className="flex items-center gap-2">
+              <img
+                src="https://i.imgur.com/92eVr1d.jpeg"
+                alt="NEXT RAIL"
+                className="h-14 w-auto"
+                style={{ aspectRatio: '2 / 1' }}
+              />
             </Link>
           </div>
         </header>
@@ -132,8 +137,13 @@ export default function BankCheckoutPage() {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <Link href="/" className="text-2xl font-bold text-blue-600 hover:text-blue-700">
-            🚄 NEXT RAIL
+          <Link href="/" className="flex items-center gap-2">
+            <img
+              src="https://i.imgur.com/92eVr1d.jpeg"
+              alt="NEXT RAIL"
+              className="h-14 w-auto"
+              style={{ aspectRatio: '2 / 1' }}
+            />
           </Link>
         </div>
       </header>
