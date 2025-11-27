@@ -204,7 +204,7 @@ export default function CheckoutPage() {
                       value={formData.name}
                       onChange={handleInputChange}
                       placeholder="例: 田中太郎"
-                      className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition ${errors.name
+                      className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition text-black font-medium ${errors.name
                           ? 'border-red-500 focus:border-red-600'
                           : 'border-gray-300 focus:border-blue-500'
                         }`}
@@ -224,7 +224,7 @@ export default function CheckoutPage() {
                       value={formData.email}
                       onChange={handleInputChange}
                       placeholder="例: tanaka@example.com"
-                      className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition ${errors.email
+                      className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition text-black font-medium ${errors.email
                           ? 'border-red-500 focus:border-red-600'
                           : 'border-gray-300 focus:border-blue-500'
                         }`}
@@ -258,7 +258,7 @@ export default function CheckoutPage() {
                         value={formData.phone_number}
                         onChange={handleInputChange}
                         placeholder="例: 090-1234-5678"
-                        className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition ${errors.phone_number
+                        className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition text-black font-medium ${errors.phone_number
                             ? 'border-red-500 focus:border-red-600'
                             : 'border-gray-300 focus:border-blue-500'
                           }`}
@@ -278,7 +278,7 @@ export default function CheckoutPage() {
                         value={formData.postal_code}
                         onChange={handleInputChange}
                         placeholder="例: 431-3125"
-                        className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition ${errors.postal_code
+                        className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition text-black font-medium ${errors.postal_code
                             ? 'border-red-500 focus:border-red-600'
                             : 'border-gray-300 focus:border-blue-500'
                           }`}
@@ -298,7 +298,7 @@ export default function CheckoutPage() {
                         value={formData.prefecture}
                         onChange={handleInputChange}
                         placeholder="例: 静岡県"
-                        className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition ${errors.prefecture
+                        className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition text-black font-medium ${errors.prefecture
                             ? 'border-red-500 focus:border-red-600'
                             : 'border-gray-300 focus:border-blue-500'
                           }`}
@@ -318,7 +318,7 @@ export default function CheckoutPage() {
                         value={formData.city}
                         onChange={handleInputChange}
                         placeholder="例: 浜松市北区"
-                        className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition ${errors.city
+                        className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition text-black font-medium ${errors.city
                             ? 'border-red-500 focus:border-red-600'
                             : 'border-gray-300 focus:border-blue-500'
                           }`}
@@ -338,7 +338,7 @@ export default function CheckoutPage() {
                         onChange={handleInputChange}
                         placeholder="例: 新都田1-2-3"
                         rows={3}
-                        className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition resize-none ${errors.address_line
+                        className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition resize-none text-black font-medium ${errors.address_line
                             ? 'border-red-500 focus:border-red-600'
                             : 'border-gray-300 focus:border-blue-500'
                           }`}
