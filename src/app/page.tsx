@@ -105,6 +105,9 @@ export default function Home() {
               <a href="#rewards" className="text-gray-600 hover:text-gray-900 font-medium">
                 リターン
               </a>
+              <a href="https://note.com/north0318/m/m3866103d3004" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-900 font-medium">
+                過去の18きっぷ遠足
+              </a>
               <a href="https://forms.gle/Qt4wgB68uLjnrC2f6" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-900 font-medium">
                 お問い合わせ
               </a>

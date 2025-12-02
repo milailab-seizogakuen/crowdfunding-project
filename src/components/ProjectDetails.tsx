@@ -230,6 +230,46 @@ export const ProjectDetails: React.FC = () => {
         </p>
       </section>
 
+      {/* Returns */}
+      <section className="space-y-4">
+        <h3 className="text-xl font-bold text-gray-900 border-l-4 border-orange-500 pl-3">
+          リターンについて
+        </h3>
+        <p className="text-base leading-relaxed">
+          今回のリターンは個人的な里帰りも兼ねて平戸より直送します。
+        </p>
+        <p className="text-base leading-relaxed">
+          平戸は日本本土最西端の鉄道駅がある場所で、広大な大陸だなによって豊かな漁場となっている東シナ海で採れた美味しい海産物をお送りいたします。
+        </p>
+        <img
+          src="https://i.imgur.com/cyb6OBC.png"
+          alt="平戸の海産物"
+          className="w-full rounded-lg shadow-md my-4"
+        />
+        <p className="text-base leading-relaxed">
+          今回のクラファンのリターンは手数料無料な分、送料込みで原価率50％と通常のクラファンやふるさと納税ではありえないレベルの豪華なものを用意しているので期待して大丈夫です！
+        </p>
+        <p className="text-base leading-relaxed">
+          また畜産物のリターンについては、近江牛と並んで日本最古の平戸牛をお届けいたします。
+        </p>
+        <img
+          src="https://i.imgur.com/e9DcNR0.png"
+          alt="平戸牛"
+          className="w-full rounded-lg shadow-md my-4"
+        />
+        <p className="text-base leading-relaxed">
+          さらにレターパックで届く農産物やお土産のリターンもあり！
+        </p>
+        <p className="text-base leading-relaxed">
+          長崎県民以外知らない秘密のお土産、カスドースをお届け予定！
+        </p>
+        <img
+          src="https://i.imgur.com/IhyLf8k.jpeg"
+          alt="カスドース"
+          className="w-full rounded-lg shadow-md my-4"
+        />
+      </section>
+
       {/* Schedule */}
       <section className="space-y-4">
         <h3 className="text-xl font-bold text-gray-900 border-l-4 border-orange-500 pl-3">
