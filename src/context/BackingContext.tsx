@@ -7,7 +7,13 @@ import {
   BackerData,
   BackingContextType,
   JPYCPaymentState,
+  CheckoutSummary,
 } from '@/types/backing';
+
+/**
+ * システム利用料率（5%）
+ */
+const SYSTEM_FEE_RATE = 0.05;
 
 /**
  * BackingContext
@@ -143,6 +149,28 @@ export const BackingProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   }, []);
 
+  /**
+   * チェックアウト明細を計算
+   * @param paymentMethod 決済方法
+   * @returns CheckoutSummary
+   */
+  const calculateCheckoutSummary = useCallback(
+    (paymentMethod: 'bank' | 'paypal' | 'jpyc'): CheckoutSummary => {
+      const subtotal = totalAmount;
+      const systemFee = Math.floor(subtotal * SYSTEM_FEE_RATE);
+      const jpycDiscount = paymentMethod === 'jpyc' ? systemFee : 0;
+      const total = subtotal + systemFee - jpycDiscount;
+
+      return {
+        subtotal,
+        systemFee,
+        jpycDiscount,
+        total,
+      };
+    },
+    [totalAmount]
+  );
+
   const value: BackingContextType = {
     // リターン選択
     selectedRewards,
@@ -166,6 +194,9 @@ export const BackingProvider: React.FC<{ children: React.ReactNode }> = ({
     // 計算結果
     totalAmount,
     hasShippingRequirement,
+
+    // 手数料計算
+    calculateCheckoutSummary,
 
     // リセット
     resetCart,

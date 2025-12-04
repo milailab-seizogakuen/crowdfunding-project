@@ -15,7 +15,12 @@ import { useBackingContext } from '@/context/BackingContext';
  */
 export default function CheckoutPage() {
   const router = useRouter();
-  const { selectedRewards, totalAmount, hasShippingRequirement, backer, setBacker, paymentMethod, setPaymentMethod } = useBackingContext();
+  const { selectedRewards, totalAmount, hasShippingRequirement, backer, setBacker, paymentMethod, setPaymentMethod, calculateCheckoutSummary } = useBackingContext();
+
+  // 手数料計算結果
+  const checkoutSummary = paymentMethod
+    ? calculateCheckoutSummary(paymentMethod)
+    : { subtotal: totalAmount, systemFee: 0, jpycDiscount: 0, total: totalAmount };
 
   useEffect(() => {
     console.log(' PayPal ページ読み込み');
@@ -37,6 +42,54 @@ export default function CheckoutPage() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isLoadingAddress, setIsLoadingAddress] = useState(false);
+
+  // 郵便番号から住所を自動入力
+  const fetchAddressFromPostalCode = async (postalCode: string) => {
+    // ハイフンを除去して7桁の数字のみにする
+    const cleanedCode = postalCode.replace(/-/g, '');
+
+    // 7桁でない場合は何もしない
+    if (cleanedCode.length !== 7 || !/^\d{7}$/.test(cleanedCode)) {
+      return;
+    }
+
+    setIsLoadingAddress(true);
+    try {
+      const response = await fetch(`https://zipcloud.ibsnet.co.jp/api/search?zipcode=${cleanedCode}`);
+      const data = await response.json();
+
+      if (data.status === 200 && data.results && data.results.length > 0) {
+        const result = data.results[0];
+        setFormData((prev) => ({
+          ...prev,
+          prefecture: result.address1,
+          city: result.address2 + result.address3,
+        }));
+        // 住所取得成功時はエラーをクリア
+        setErrors((prev) => ({
+          ...prev,
+          postal_code: '',
+          prefecture: '',
+          city: '',
+        }));
+      } else {
+        // 住所が見つからない場合
+        setErrors((prev) => ({
+          ...prev,
+          postal_code: '郵便番号が見つかりませんでした',
+        }));
+      }
+    } catch (error) {
+      console.error('住所取得エラー:', error);
+      setErrors((prev) => ({
+        ...prev,
+        postal_code: '住所の取得に失敗しました',
+      }));
+    } finally {
+      setIsLoadingAddress(false);
+    }
+  };
 
   // バリデーション
   const validateForm = () => {
@@ -86,6 +139,14 @@ export default function CheckoutPage() {
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }));
     }
+
+    // 郵便番号が入力された場合、住所を自動取得
+    if (name === 'postal_code') {
+      const cleanedCode = value.replace(/-/g, '');
+      if (cleanedCode.length === 7 && /^\d{7}$/.test(cleanedCode)) {
+        fetchAddressFromPostalCode(value);
+      }
+    }
   };
 
   // 送信ハンドラ
@@ -110,8 +171,9 @@ export default function CheckoutPage() {
         // JPYC決済: JPYC 決済ページへ
         router.push('/backing/checkout/jpyc');
       } else if (paymentMethod === 'paypal') {
-        // PayPal決済: PayPal 決済ページへ
-        router.push(`/backing/checkout/paypal?amount=${totalAmount}`);
+        // PayPal決済: PayPal 決済ページへ（システム利用料込み）
+        const summary = calculateCheckoutSummary(paymentMethod);
+        router.push(`/backing/checkout/paypal?amount=${summary.total}`);
       }
     } catch (error) {
       console.error('Error:', error);
@@ -205,8 +267,8 @@ export default function CheckoutPage() {
                       onChange={handleInputChange}
                       placeholder="例: 田中太郎"
                       className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition text-black font-medium ${errors.name
-                          ? 'border-red-500 focus:border-red-600'
-                          : 'border-gray-300 focus:border-blue-500'
+                        ? 'border-red-500 focus:border-red-600'
+                        : 'border-gray-300 focus:border-blue-500'
                         }`}
                     />
                     {errors.name && <p className="text-red-600 text-sm mt-1">{errors.name}</p>}
@@ -225,8 +287,8 @@ export default function CheckoutPage() {
                       onChange={handleInputChange}
                       placeholder="例: tanaka@example.com"
                       className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition text-black font-medium ${errors.email
-                          ? 'border-red-500 focus:border-red-600'
-                          : 'border-gray-300 focus:border-blue-500'
+                        ? 'border-red-500 focus:border-red-600'
+                        : 'border-gray-300 focus:border-blue-500'
                         }`}
                     />
                     {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
@@ -259,8 +321,8 @@ export default function CheckoutPage() {
                         onChange={handleInputChange}
                         placeholder="例: 090-1234-5678"
                         className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition text-black font-medium ${errors.phone_number
-                            ? 'border-red-500 focus:border-red-600'
-                            : 'border-gray-300 focus:border-blue-500'
+                          ? 'border-red-500 focus:border-red-600'
+                          : 'border-gray-300 focus:border-blue-500'
                           }`}
                       />
                       {errors.phone_number && <p className="text-red-600 text-sm mt-1">{errors.phone_number}</p>}
@@ -271,19 +333,27 @@ export default function CheckoutPage() {
                       <label htmlFor="postal_code" className="block text-sm font-semibold text-gray-900 mb-2">
                         郵便番号 <span className="text-red-600">*</span>
                       </label>
-                      <input
-                        type="text"
-                        id="postal_code"
-                        name="postal_code"
-                        value={formData.postal_code}
-                        onChange={handleInputChange}
-                        placeholder="例: 431-3125"
-                        className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition text-black font-medium ${errors.postal_code
+                      <div className="relative">
+                        <input
+                          type="text"
+                          id="postal_code"
+                          name="postal_code"
+                          value={formData.postal_code}
+                          onChange={handleInputChange}
+                          placeholder="例: 431-3125"
+                          className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition text-black font-medium ${errors.postal_code
                             ? 'border-red-500 focus:border-red-600'
                             : 'border-gray-300 focus:border-blue-500'
-                          }`}
-                      />
+                            }`}
+                        />
+                        {isLoadingAddress && (
+                          <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                            <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                          </div>
+                        )}
+                      </div>
                       {errors.postal_code && <p className="text-red-600 text-sm mt-1">{errors.postal_code}</p>}
+                      <p className="text-xs text-gray-500 mt-1">7桁の郵便番号を入力すると住所が自動入力されます</p>
                     </div>
 
                     {/* 都道府県 */}
@@ -299,8 +369,8 @@ export default function CheckoutPage() {
                         onChange={handleInputChange}
                         placeholder="例: 静岡県"
                         className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition text-black font-medium ${errors.prefecture
-                            ? 'border-red-500 focus:border-red-600'
-                            : 'border-gray-300 focus:border-blue-500'
+                          ? 'border-red-500 focus:border-red-600'
+                          : 'border-gray-300 focus:border-blue-500'
                           }`}
                       />
                       {errors.prefecture && <p className="text-red-600 text-sm mt-1">{errors.prefecture}</p>}
@@ -319,8 +389,8 @@ export default function CheckoutPage() {
                         onChange={handleInputChange}
                         placeholder="例: 浜松市北区"
                         className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition text-black font-medium ${errors.city
-                            ? 'border-red-500 focus:border-red-600'
-                            : 'border-gray-300 focus:border-blue-500'
+                          ? 'border-red-500 focus:border-red-600'
+                          : 'border-gray-300 focus:border-blue-500'
                           }`}
                       />
                       {errors.city && <p className="text-red-600 text-sm mt-1">{errors.city}</p>}
@@ -339,8 +409,8 @@ export default function CheckoutPage() {
                         placeholder="例: 新都田1-2-3"
                         rows={3}
                         className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition resize-none text-black font-medium ${errors.address_line
-                            ? 'border-red-500 focus:border-red-600'
-                            : 'border-gray-300 focus:border-blue-500'
+                          ? 'border-red-500 focus:border-red-600'
+                          : 'border-gray-300 focus:border-blue-500'
                           }`}
                       />
                       {errors.address_line && <p className="text-red-600 text-sm mt-1">{errors.address_line}</p>}
@@ -358,8 +428,8 @@ export default function CheckoutPage() {
                 <div className="space-y-4">
                   {/* 銀行振込 */}
                   <label className={`flex items-start gap-4 p-4 rounded-lg border-2 cursor-pointer transition ${paymentMethod === 'bank'
-                      ? 'border-blue-600 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
+                    ? 'border-blue-600 bg-blue-50'
+                    : 'border-gray-200 hover:border-gray-300'
                     }`}>
                     <input
                       type="radio"
@@ -379,8 +449,8 @@ export default function CheckoutPage() {
 
                   {/* PayPal */}
                   <label className={`flex items-start gap-4 p-4 rounded-lg border-2 cursor-pointer transition ${paymentMethod === 'paypal'
-                      ? 'border-blue-600 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
+                    ? 'border-blue-600 bg-blue-50'
+                    : 'border-gray-200 hover:border-gray-300'
                     }`}>
                     <input
                       type="radio"
@@ -400,8 +470,8 @@ export default function CheckoutPage() {
 
                   {/* JPYC */}
                   <label className={`flex items-start gap-4 p-4 rounded-lg border-2 cursor-pointer transition ${paymentMethod === 'jpyc'
-                      ? 'border-blue-600 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
+                    ? 'border-blue-600 bg-blue-50'
+                    : 'border-gray-200 hover:border-gray-300'
                     }`}>
                     <input
                       type="radio"
@@ -412,7 +482,12 @@ export default function CheckoutPage() {
                       className="mt-1"
                     />
                     <div className="flex-1">
-                      <p className="font-semibold text-gray-900">🔗 JPYC（暗号資産）</p>
+                      <div className="flex items-center gap-2">
+                        <p className="font-semibold text-gray-900">🔗 JPYC（暗号資産）</p>
+                        <span className="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">
+                          手数料無料
+                        </span>
+                      </div>
                       <p className="text-sm text-gray-600 mt-1">
                         MetaMask を使用した暗号資産での決済（ガスレス）
                       </p>
@@ -429,8 +504,8 @@ export default function CheckoutPage() {
                   type="submit"
                   disabled={isSubmitting}
                   className={`flex-1 py-4 px-6 rounded-lg font-bold text-lg transition-all duration-200 ${isSubmitting
-                      ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-                      : 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl active:scale-95'
+                    ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl active:scale-95'
                     }`}
                 >
                   {isSubmitting ? '処理中...' : '注文を確定する'}
@@ -476,14 +551,61 @@ export default function CheckoutPage() {
                   ))}
                 </div>
 
-                {/* 合計金額 */}
-                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                  <div className="flex justify-between items-center">
-                    <span className="font-semibold text-gray-900">合計金額</span>
-                    <span className="text-3xl font-bold text-blue-600">
-                      ¥{totalAmount.toLocaleString()}
+                {/* お支払い内容 */}
+                <div className="space-y-3">
+                  <h4 className="font-bold text-gray-900 text-sm">【お支払い内容】</h4>
+
+                  {/* リターン合計 */}
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-gray-700">リターン合計:</span>
+                    <span className="font-semibold text-gray-900">
+                      ¥{checkoutSummary.subtotal.toLocaleString()}
                     </span>
                   </div>
+
+                  {/* システム利用料 */}
+                  {paymentMethod && (
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-700">システム利用料(5%):</span>
+                      <span className="font-semibold text-gray-900">
+                        ¥{checkoutSummary.systemFee.toLocaleString()}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* JPYC割引 */}
+                  {paymentMethod === 'jpyc' && checkoutSummary.jpycDiscount > 0 && (
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-green-600 font-semibold">JPYC割引(5%):</span>
+                      <span className="font-semibold text-green-600">
+                        -¥{checkoutSummary.jpycDiscount.toLocaleString()}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* 区切り線 */}
+                  {paymentMethod && (
+                    <div className="border-t-2 border-gray-300 my-2"></div>
+                  )}
+
+                  {/* お支払い合計 */}
+                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                    <div className="flex justify-between items-center">
+                      <span className="font-semibold text-gray-900">お支払い合計</span>
+                      <span className="text-3xl font-bold text-blue-600">
+                        ¥{paymentMethod ? checkoutSummary.total.toLocaleString() : totalAmount.toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* JPYC特典メッセージ */}
+                  {paymentMethod === 'jpyc' && (
+                    <div className="bg-green-50 p-3 rounded-lg border border-green-200">
+                      <p className="text-sm font-semibold text-green-700 text-center">
+                        🎉 JPYC決済で手数料無料！
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
 

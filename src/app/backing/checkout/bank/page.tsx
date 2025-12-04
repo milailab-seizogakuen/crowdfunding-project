@@ -12,7 +12,11 @@ export default function BankCheckoutPage() {
     totalAmount,
     backer,
     hasShippingRequirement,
+    calculateCheckoutSummary,
   } = useBackingContext();
+
+  // 手数料込みの金額を計算
+  const checkoutSummary = calculateCheckoutSummary('bank');
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -80,7 +84,7 @@ export default function BankCheckoutPage() {
 
       // 2. backing オブジェクトを構築
       const backing = {
-        total_amount: totalAmount,
+        total_amount: checkoutSummary.total,  // システム利用料込みの金額
         payment_method: 'bank',
         payment_status: 'pending',
         order_status: 'pending',
@@ -355,7 +359,7 @@ export default function BankCheckoutPage() {
                       合計金額
                     </span>
                     <span className="text-2xl font-bold text-blue-600">
-                      ¥{totalAmount.toLocaleString()}
+                      ¥{checkoutSummary.total.toLocaleString()}
                     </span>
                   </div>
                 </div>

@@ -15,7 +15,10 @@ import { JPYCPayment } from '@/components/payment/JPYCPayment';
  */
 export default function JPYCCheckoutPage() {
   const router = useRouter();
-  const { selectedRewards, totalAmount, backer } = useBackingContext();
+  const { selectedRewards, totalAmount, backer, calculateCheckoutSummary } = useBackingContext();
+
+  // 手数料込みの金額を計算（JPYCは割引で相殺されるため実質totalAmountと同じ）
+  const checkoutSummary = calculateCheckoutSummary('jpyc');
 
   // リターンが選択されていない場合
   if (selectedRewards.length === 0) {
@@ -53,7 +56,7 @@ export default function JPYCCheckoutPage() {
 
       // 2. backing オブジェクトを構築
       const backing = {
-        total_amount: totalAmount,
+        total_amount: checkoutSummary.total,  // JPYC割引後の金額（実質リターン合計と同じ）
         payment_method: 'jpyc',
         payment_status: 'completed',
         order_status: 'received',
@@ -214,7 +217,7 @@ export default function JPYCCheckoutPage() {
                   <div className="flex justify-between items-center">
                     <span className="font-semibold text-gray-900">合計金額</span>
                     <span className="text-3xl font-bold text-blue-600">
-                      ¥{totalAmount.toLocaleString()}
+                      ¥{checkoutSummary.total.toLocaleString()}
                     </span>
                   </div>
                 </div>

@@ -110,6 +110,16 @@ export interface JPYCPaymentState {
 }
 
 /**
+ * チェックアウト明細データ
+ */
+export interface CheckoutSummary {
+  subtotal: number;          // リターン合計
+  systemFee: number;         // システム利用料（5%）
+  jpycDiscount: number;      // JPYC割引（5%）※JPYC選択時のみ
+  total: number;             // お支払い合計
+}
+
+/**
  * BackingContext の型
  */
 export interface BackingContextType {
@@ -134,6 +144,9 @@ export interface BackingContextType {
   // 計算結果
   totalAmount: number;
   hasShippingRequirement: boolean;
+
+  // 手数料計算
+  calculateCheckoutSummary: (paymentMethod: 'bank' | 'paypal' | 'jpyc') => CheckoutSummary;
 
   // リセット
   resetCart: () => void;

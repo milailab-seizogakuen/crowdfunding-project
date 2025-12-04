@@ -20,15 +20,26 @@ export const JPYCPayment: React.FC<JPYCPaymentProps> = ({
   onSuccess,
   onError,
 }) => {
+  // 1. すべてのhooksを先に呼び出す
   const { address, isConnected } = useAccount();
   const { data: walletClient } = useWalletClient();
-  const { totalAmount, jpycPaymentState, setJpycPaymentState } = useBackingContext();
+  const { totalAmount, jpycPaymentState, setJpycPaymentState, calculateCheckoutSummary } = useBackingContext();
 
+  // 手数料込みの金額を計算（JPYCは割引で相殺されるため実質totalAmountと同じ）
+  const checkoutSummary = calculateCheckoutSummary('jpyc');
+
+  // 2. accountを計算（hooksの直後）
+  const account = address || null;
+
+  // 3. useState hooks
   const [isSigningOrSubmitting, setIsSigningOrSubmitting] = useState(false);
   const [deadline, setDeadline] = useState<number | null>(null);
   const [signer, setSigner] = useState<any | null>(null);
   const [web3Error, setWeb3Error] = useState<string | null>(null);
+  const [balance, setBalance] = useState<string | null>(null);
+  const [isLoadingBalance, setIsLoadingBalance] = useState(false);
 
+  // 4. useEffect hooks（accountを使える）
   // Convert walletClient to signer
   useEffect(() => {
     if (walletClient) {
@@ -45,10 +56,32 @@ export const JPYCPayment: React.FC<JPYCPaymentProps> = ({
     }
   }, [walletClient]);
 
-  const account = address || null;
+  // 残高取得
+  useEffect(() => {
+    const fetchBalance = async () => {
+      if (!isConnected || !account || !signer?.provider) {
+        setBalance(null);
+        return;
+      }
 
-  // 金額を整数(Wei)に変換してから文字列化
-  const amountInWei = BigInt(Math.floor(totalAmount * 1e18)).toString();
+      setIsLoadingBalance(true);
+      try {
+        const balanceWei = await jpycService.getBalance(account, signer.provider);
+        const balanceNumber = Number(balanceWei) / 1e18;
+        setBalance(balanceNumber.toLocaleString('ja-JP', { maximumFractionDigits: 2 }));
+      } catch (err: any) {
+        console.error('残高取得エラー:', err);
+        setBalance(null);
+      } finally {
+        setIsLoadingBalance(false);
+      }
+    };
+
+    fetchBalance();
+  }, [isConnected, account, signer]);
+
+  // 金額を整数(Wei)に変換してから文字列化（JPYC割引後の金額）
+  const amountInWei = BigInt(Math.floor(checkoutSummary.total * 1e18)).toString();
 
   // バックエンドウォレットアドレス
   const backendWallet = process.env.NEXT_PUBLIC_BACKEND_WALLET_ADDRESS || '0xE36A43fA750745E8A27522b927e84EE1B50e31D5';
@@ -178,18 +211,64 @@ export const JPYCPayment: React.FC<JPYCPaymentProps> = ({
   const isSignatureGenerated = jpycPaymentState.signature !== null;
   const isTransactionComplete = jpycPaymentState.transactionHash !== null;
 
+  // 未接続時の表示
+  if (!isConnected) {
+    return (
+      <div className="space-y-6">
+        <div className="bg-white border-2 border-gray-300 rounded-lg p-8 text-center">
+          <h3 className="text-2xl font-bold text-gray-900 mb-4">
+            🔗 JPYC決済
+          </h3>
+          <p className="text-gray-600 mb-6">
+            ウォレットを接続して決済を開始してください
+          </p>
+          <div className="flex justify-center">
+            <WalletConnectButton />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 接続済み時の表示
   return (
     <div className="space-y-6">
-      {/* ウォレット接続状態表示エリア */}
-      <div className="flex justify-between items-center bg-gray-50 p-4 rounded-lg border border-gray-200">
-        <div>
-          <p className="text-sm font-bold text-gray-700">ウォレット接続</p>
-          {!isConnected && (
-            <p className="text-xs text-red-500">決済にはウォレット接続が必要です</p>
+      {/* 接続情報と残高 */}
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <h3 className="text-lg font-bold text-gray-900 mb-4">接続情報</h3>
+        <div className="space-y-3">
+          <div className="flex justify-between items-center">
+            <span className="text-gray-600 font-semibold">接続ウォレット:</span>
+            <span className="text-gray-900 font-mono">
+              {account?.substring(0, 6)}...{account?.substring(account.length - 4)}
+            </span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-gray-600 font-semibold">JPYC残高:</span>
+            {isLoadingBalance ? (
+              <span className="text-gray-500">読み込み中...</span>
+            ) : balance ? (
+              <span className="text-gray-900 font-bold">{balance} JPYC</span>
+            ) : (
+              <span className="text-gray-500">取得できませんでした</span>
+            )}
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-gray-600 font-semibold">支払額:</span>
+            <span className="text-blue-600 font-bold text-lg">
+              {checkoutSummary.total.toLocaleString()} JPYC
+            </span>
+          </div>
+          {balance && parseFloat(balance.replace(/,/g, '')) < checkoutSummary.total && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3 mt-3">
+              <p className="text-red-800 text-sm font-semibold">
+                ⚠️ 残高が不足しています
+              </p>
+              <p className="text-red-600 text-xs mt-1">
+                必要な残高: {checkoutSummary.total.toLocaleString()} JPYC
+              </p>
+            </div>
           )}
-        </div>
-        <div className="flex flex-col gap-2 items-end">
-          <WalletConnectButton />
         </div>
       </div>
 
@@ -217,7 +296,7 @@ export const JPYCPayment: React.FC<JPYCPaymentProps> = ({
         </p>
         <button
           onClick={handleGenerateSignature}
-          disabled={isSigningOrSubmitting || isTransactionComplete}
+          disabled={isSigningOrSubmitting || isTransactionComplete || !!(balance && parseFloat(balance.replace(/,/g, '')) < checkoutSummary.total)}
           className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white font-bold py-2 px-4 rounded transition"
         >
           {isSigningOrSubmitting ? '署名中...' : '署名を生成'}
@@ -271,16 +350,6 @@ export const JPYCPayment: React.FC<JPYCPaymentProps> = ({
           </a>
         </div>
       )}
-
-      {/* 接続情報 */}
-      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm">
-        <p className="text-gray-600">
-          <span className="font-semibold">接続ウォレット:</span> {account?.substring(0, 6)}...{account?.substring(account.length - 4)}
-        </p>
-        <p className="text-gray-600">
-          <span className="font-semibold">支援金額:</span> ¥{totalAmount.toLocaleString()}
-        </p>
-      </div>
     </div>
   );
 };

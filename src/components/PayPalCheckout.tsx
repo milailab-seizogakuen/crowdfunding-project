@@ -22,7 +22,11 @@ export function PayPalCheckout() {
     totalAmount,
     backer,  // ◀️ BackingContext から backer 情報を取得
     resetCart,
+    calculateCheckoutSummary,
   } = useBackingContext();
+
+  // 手数料込みの金額を計算
+  const checkoutSummary = calculateCheckoutSummary('paypal');
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -93,7 +97,7 @@ export function PayPalCheckout() {
           <div className="mb-4">
             <p className="text-gray-700 text-sm font-semibold mb-2">
               合計金額:{' '}
-              <span className="text-2xl text-blue-600">¥{totalAmount.toLocaleString()}</span>
+              <span className="text-2xl text-blue-600">¥{checkoutSummary.total.toLocaleString()}</span>
             </p>
             <p className="text-gray-600 text-xs">
               下のボタンをクリックして PayPal で支払いを完了してください
@@ -112,7 +116,7 @@ export function PayPalCheckout() {
                     {
                       amount: {
                         currency_code: 'JPY',
-                        value: String(Math.round(totalAmount)),
+                        value: String(Math.round(checkoutSummary.total)),
                       },
                       description: `NEXT RAIL 支援 - ${selectedRewards
                         .map((r) => r.title)
@@ -152,7 +156,7 @@ export function PayPalCheckout() {
                 // BackingContext から取得した backer 情報を完全に含める
                 const requestBody = {
                   orderId: data.orderID,
-                  totalAmount,
+                  totalAmount: checkoutSummary.total,  // システム利用料込みの金額
                   selectedRewards,
                   // 必須フィールド
                   name: backer.name,
@@ -190,7 +194,7 @@ export function PayPalCheckout() {
                 // 成功時の処理
                 if (result.success && result.backing_id) {
                   resetCart();
-                  router.push(`/backing/confirmation?backing_id=${result.backing_id}&amount=${totalAmount}&method=paypal`);
+                  router.push(`/backing/confirmation?backing_id=${result.backing_id}&amount=${checkoutSummary.total}&method=paypal`);
                 } else {
                   throw new Error(result.message || 'backing_id が返されませんでした');
                 }
