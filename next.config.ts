@@ -40,6 +40,14 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'i.imgur.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'assets.st-note.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn.peatix.com',
+      },
     ],
   },
 };
