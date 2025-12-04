@@ -254,7 +254,7 @@ export default function Home() {
       {/* フッター */}
       <footer className="bg-gray-900 text-gray-300 mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-8 mb-8">
             <div>
               <Image
                 src="https://i.imgur.com/xrwq829.png"
@@ -273,6 +273,12 @@ export default function Home() {
                 <li><a href="#" className="hover:text-white transition-colors">ホーム</a></li>
                 <li><a href="#overview" className="hover:text-white transition-colors">プロジェクト</a></li>
                 <li><a href="#rewards" className="hover:text-white transition-colors">リターン</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-white font-semibold mb-4">NEXT RAILについて</h4>
+              <ul className="space-y-2 text-sm">
+                <li><a href="https://milailab.teen.jp/nextrail/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">NEXT RAIL公式サイト</a></li>
               </ul>
             </div>
             <div>
