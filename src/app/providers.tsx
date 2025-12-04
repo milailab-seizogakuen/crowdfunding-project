@@ -3,19 +3,23 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { WagmiProvider } from 'wagmi'
 import { createAppKit } from '@reown/appkit/react'
+import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 import { polygon } from '@reown/appkit/networks'
-import { config } from '@/lib/wagmiConfig'
 
 const queryClient = new QueryClient()
 
-// MetaMask SDK を完全除去してブラウザウォレット直接接続を使用
-createAppKit({
-  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!,  // ← これを追加
-  adapters: [],
+const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!
+
+// WagmiAdapter を作成
+const wagmiAdapter = new WagmiAdapter({
+  projectId,
   networks: [polygon],
-  // ブラウザのインジェクトウォレット（MetaMask等）を直接使用
-  enableInjectedWallets: true,
-  // WalletConnect SDK経由を完全に切断
+})
+
+createAppKit({
+  projectId,
+  adapters: [wagmiAdapter],
+  networks: [polygon],
   features: {
     analytics: false,
   },
@@ -23,7 +27,7 @@ createAppKit({
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <WagmiProvider config={config}>
+    <WagmiProvider config={wagmiAdapter.wagmiConfig}>
       <QueryClientProvider client={queryClient}>
         {children}
       </QueryClientProvider>
