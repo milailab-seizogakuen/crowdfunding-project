@@ -10,6 +10,7 @@ const queryClient = new QueryClient()
 
 // MetaMask SDK を完全除去してブラウザウォレット直接接続を使用
 createAppKit({
+  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!,  // ← これを追加
   adapters: [],
   networks: [polygon],
   // ブラウザのインジェクトウォレット（MetaMask等）を直接使用
