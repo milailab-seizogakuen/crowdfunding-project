@@ -1,9 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useWeb3 } from '@/contexts/Web3Context';
+import React, { useState, useEffect } from 'react';
+import { useAccount, useWalletClient } from 'wagmi';
 import { jpycService } from '@/lib/jpyc/jpycService';
 import { useBackingContext } from '@/context/BackingContext';
+import WalletConnectButton from '@/components/WalletConnectButton';
+import { clientToSigner } from '@/lib/ethers-adapters';
 
 interface JPYCPaymentProps {
   onSuccess?: (transactionHash: string) => void;
@@ -18,13 +20,34 @@ export const JPYCPayment: React.FC<JPYCPaymentProps> = ({
   onSuccess,
   onError,
 }) => {
-  const { isConnected, account, connectWallet, isLoading: isWeb3Loading, error: web3Error } = useWeb3();
-  const { backer, totalAmount, jpycPaymentState, setJpycPaymentState } = useBackingContext();
-  
+  const { address, isConnected } = useAccount();
+  const { data: walletClient } = useWalletClient();
+  const { totalAmount, jpycPaymentState, setJpycPaymentState } = useBackingContext();
+
   const [isSigningOrSubmitting, setIsSigningOrSubmitting] = useState(false);
   const [deadline, setDeadline] = useState<number | null>(null);
+  const [signer, setSigner] = useState<any | null>(null);
+  const [web3Error, setWeb3Error] = useState<string | null>(null);
 
-  // 金額を整数（Wei）に変換してから文字列化
+  // Convert walletClient to signer
+  useEffect(() => {
+    if (walletClient) {
+      try {
+        const ethersSigner = clientToSigner(walletClient);
+        setSigner(ethersSigner);
+        setWeb3Error(null);
+      } catch (err: any) {
+        console.error('Error setting up signer:', err);
+        setWeb3Error(err.message || 'ウォレットの設定に失敗しました');
+      }
+    } else {
+      setSigner(null);
+    }
+  }, [walletClient]);
+
+  const account = address || null;
+
+  // 金額を整数(Wei)に変換してから文字列化
   const amountInWei = BigInt(Math.floor(totalAmount * 1e18)).toString();
 
   // バックエンドウォレットアドレス
@@ -34,7 +57,7 @@ export const JPYCPayment: React.FC<JPYCPaymentProps> = ({
    * ステップ1: MetaMask で EIP-712 署名を生成
    */
   const handleGenerateSignature = async () => {
-    if (!isConnected || !account) {
+    if (!isConnected || !account || !signer) {
       setJpycPaymentState({ error: 'ウォレットを接続してください' });
       return;
     }
@@ -57,7 +80,8 @@ export const JPYCPayment: React.FC<JPYCPaymentProps> = ({
         account,
         backendWallet,
         amountInWei,
-        newDeadline  // ← 計算した deadline を使用
+        newDeadline,
+        signer  // ← signerを渡す
       );
 
       console.log('✅ 署名成功:', signature);
@@ -150,47 +174,36 @@ export const JPYCPayment: React.FC<JPYCPaymentProps> = ({
     }
   };
 
-  // ウォレット未接続
-  if (!isConnected) {
-    return (
-      <div className="space-y-4">
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <p className="text-blue-800 font-semibold mb-4">
-            JPYC で決済するには MetaMask を接続してください
-          </p>
-          <button
-            onClick={connectWallet}
-            disabled={isWeb3Loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-2 px-4 rounded transition"
-          >
-            {isWeb3Loading ? '接続中...' : 'MetaMask を接続'}
-          </button>
-          {web3Error && (
-            <p className="mt-2 text-red-600 text-sm">{web3Error}</p>
-          )}
-        </div>
-      </div>
-    );
-  }
-
   // 署名生成済みかチェック
   const isSignatureGenerated = jpycPaymentState.signature !== null;
   const isTransactionComplete = jpycPaymentState.transactionHash !== null;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      {/* ウォレット接続状態表示エリア */}
+      <div className="flex justify-between items-center bg-gray-50 p-4 rounded-lg border border-gray-200">
+        <div>
+          <p className="text-sm font-bold text-gray-700">ウォレット接続</p>
+          {!isConnected && (
+            <p className="text-xs text-red-500">決済にはウォレット接続が必要です</p>
+          )}
+        </div>
+        <div className="flex flex-col gap-2 items-end">
+          <WalletConnectButton />
+        </div>
+      </div>
+
       {/* エラー表示 */}
-      {jpycPaymentState.error && (
+      {(jpycPaymentState.error || web3Error) && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
           <p className="text-red-800 font-semibold">エラー</p>
-          <p className="text-red-600 text-sm">{jpycPaymentState.error}</p>
+          <p className="text-red-600 text-sm">{jpycPaymentState.error || web3Error}</p>
         </div>
       )}
 
       {/* ステップ1: 署名生成 */}
-      <div className={`border rounded-lg p-4 transition ${
-        isSignatureGenerated ? 'bg-green-50 border-green-300' : 'bg-gray-50 border-gray-300'
-      }`}>
+      <div className={`border rounded-lg p-4 transition ${isSignatureGenerated ? 'bg-green-50 border-green-300' : 'bg-gray-50 border-gray-300'
+        }`}>
         <div className="flex items-center justify-between mb-2">
           <h3 className="font-semibold text-gray-800">
             ステップ 1: 署名を生成
@@ -212,9 +225,8 @@ export const JPYCPayment: React.FC<JPYCPaymentProps> = ({
       </div>
 
       {/* ステップ2: トランザクション実行 */}
-      <div className={`border rounded-lg p-4 transition ${
-        isTransactionComplete ? 'bg-green-50 border-green-300' : isSignatureGenerated ? 'bg-blue-50 border-blue-300' : 'bg-gray-50 border-gray-300 opacity-50'
-      }`}>
+      <div className={`border rounded-lg p-4 transition ${isTransactionComplete ? 'bg-green-50 border-green-300' : isSignatureGenerated ? 'bg-blue-50 border-blue-300' : 'bg-gray-50 border-gray-300 opacity-50'
+        }`}>
         <div className="flex items-center justify-between mb-2">
           <h3 className="font-semibold text-gray-800">
             ステップ 2: トランザクションを実行
@@ -263,7 +275,7 @@ export const JPYCPayment: React.FC<JPYCPaymentProps> = ({
       {/* 接続情報 */}
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm">
         <p className="text-gray-600">
-          <span className="font-semibold">接続ウォレット:</span> {account?.substring(0, 6)}...{account?.substring(-4)}
+          <span className="font-semibold">接続ウォレット:</span> {account?.substring(0, 6)}...{account?.substring(account.length - 4)}
         </p>
         <p className="text-gray-600">
           <span className="font-semibold">支援金額:</span> ¥{totalAmount.toLocaleString()}

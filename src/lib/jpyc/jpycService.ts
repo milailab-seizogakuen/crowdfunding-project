@@ -3,12 +3,6 @@
 import { Contract, BrowserProvider, isAddress, TypedDataEncoder } from 'ethers';
 import { JPYC_ABI } from './abi';
 
-declare global {
-  interface Window {
-    ethereum?: any;
-  }
-}
-
 const JPYC_TOKEN_ADDRESS = process.env.NEXT_PUBLIC_JPYC_TOKEN_ADDRESS || '0xE7C3D8C9a439feDe00D2600032D5dB0Be71C3c29';
 
 interface PermitSignatureResult {
@@ -20,12 +14,8 @@ interface PermitSignatureResult {
 }
 
 export const jpycService = {
-  async getBalance(account: string): Promise<string> {
+  async getBalance(account: string, provider: BrowserProvider): Promise<string> {
     try {
-      if (!window.ethereum) {
-        throw new Error('MetaMask がインストールされていません');
-      }
-      const provider = new BrowserProvider(window.ethereum);
       const contract = new Contract(JPYC_TOKEN_ADDRESS, JPYC_ABI, provider);
 
       const balance = await contract.balanceOf(account);
@@ -41,7 +31,8 @@ export const jpycService = {
     owner: string,
     spender: string,
     amount: string,
-    deadline: number
+    deadline: number,
+    signer: any
   ): Promise<PermitSignatureResult> {
     try {
       // 入力値バリデーションを追加
@@ -53,11 +44,7 @@ export const jpycService = {
         throw new Error('Amount must be a positive integer string');
       }
 
-      if (!window.ethereum) {
-        throw new Error('MetaMask がインストールされていません');
-      }
-      const provider = new BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
+      const provider = signer.provider;
       const contract = new Contract(JPYC_TOKEN_ADDRESS, JPYC_ABI, provider);
 
       // Chain ID を動的に取得
@@ -182,12 +169,8 @@ export const jpycService = {
     }
   },
 
-  async allowance(owner: string, spender: string): Promise<string> {
+  async allowance(owner: string, spender: string, provider: BrowserProvider): Promise<string> {
     try {
-      if (!window.ethereum) {
-        throw new Error('MetaMask がインストールされていません');
-      }
-      const provider = new BrowserProvider(window.ethereum);
       const contract = new Contract(JPYC_TOKEN_ADDRESS, JPYC_ABI, provider);
 
       const amount = await contract.allowance(owner, spender);
