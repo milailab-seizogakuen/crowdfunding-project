@@ -105,7 +105,7 @@ export function PayPalCheckout() {
           </div>
 
           <PayPalButtons
-            createOrder={async (data: any, actions) => {
+            createOrder={async (data: Record<string, unknown>, actions: Record<string, unknown>) => {
               try {
                 setIsLoading(true);
                 setError(null);
@@ -125,7 +125,7 @@ export function PayPalCheckout() {
                   ],
                 };
 
-                const order = await actions.order.create(orderData);
+                const order = await (actions as { order: { create: (orderData: unknown) => Promise<string> } }).order.create(orderData);
                 return order;
               } catch (err) {
                 const errorMessage =
@@ -136,7 +136,7 @@ export function PayPalCheckout() {
                 setIsLoading(false);
               }
             }}
-            onApprove={async (data: any) => {
+            onApprove={async (data: Record<string, unknown>) => {
               try {
                 setIsProcessing(true);
                 setError(null);
@@ -207,9 +207,9 @@ export function PayPalCheckout() {
                 setIsProcessing(false);
               }
             }}
-            onError={(err: any) => {
+            onError={(err: unknown) => {
               const errorMessage =
-                err?.message || '予期しないエラーが発生しました';
+                (err instanceof Error && err.message) || '予期しないエラーが発生しました';
               setError(errorMessage);
               console.error('❌ PayPal エラー:', err);
             }}

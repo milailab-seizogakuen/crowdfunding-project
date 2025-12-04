@@ -23,7 +23,7 @@ export const JPYCPayment: React.FC<JPYCPaymentProps> = ({
   // 1. すべてのhooksを先に呼び出す
   const { address, isConnected } = useAccount();
   const { data: walletClient } = useWalletClient();
-  const { totalAmount, jpycPaymentState, setJpycPaymentState, calculateCheckoutSummary } = useBackingContext();
+  const { jpycPaymentState, setJpycPaymentState, calculateCheckoutSummary } = useBackingContext();
 
   // 手数料込みの金額を計算（JPYCは割引で相殺されるため実質totalAmountと同じ）
   const checkoutSummary = calculateCheckoutSummary('jpyc');
@@ -34,7 +34,7 @@ export const JPYCPayment: React.FC<JPYCPaymentProps> = ({
   // 3. useState hooks
   const [isSigningOrSubmitting, setIsSigningOrSubmitting] = useState(false);
   const [deadline, setDeadline] = useState<number | null>(null);
-  const [signer, setSigner] = useState<any | null>(null);
+  const [signer, setSigner] = useState<{ provider?: unknown } | null>(null);
   const [web3Error, setWeb3Error] = useState<string | null>(null);
   const [balance, setBalance] = useState<string | null>(null);
   const [isLoadingBalance, setIsLoadingBalance] = useState(false);
@@ -47,9 +47,10 @@ export const JPYCPayment: React.FC<JPYCPaymentProps> = ({
         const ethersSigner = clientToSigner(walletClient);
         setSigner(ethersSigner);
         setWeb3Error(null);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error setting up signer:', err);
-        setWeb3Error(err.message || 'ウォレットの設定に失敗しました');
+        const errorMessage = err instanceof Error ? err.message : 'ウォレットの設定に失敗しました';
+        setWeb3Error(errorMessage);
       }
     } else {
       setSigner(null);
@@ -69,7 +70,7 @@ export const JPYCPayment: React.FC<JPYCPaymentProps> = ({
         const balanceWei = await jpycService.getBalance(account, signer.provider);
         const balanceNumber = Number(balanceWei) / 1e18;
         setBalance(balanceNumber.toLocaleString('ja-JP', { maximumFractionDigits: 2 }));
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('残高取得エラー:', err);
         setBalance(null);
       } finally {
@@ -132,9 +133,9 @@ export const JPYCPayment: React.FC<JPYCPaymentProps> = ({
         error: null,
         isProcessing: false,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('❌ 署名失敗:', error);
-      const errorMessage = error.message || '署名の生成に失敗しました';
+      const errorMessage = error instanceof Error ? error.message : '署名の生成に失敗しました';
       setJpycPaymentState({
         error: errorMessage,
         isProcessing: false,
@@ -194,9 +195,9 @@ export const JPYCPayment: React.FC<JPYCPaymentProps> = ({
       });
 
       onSuccess?.(data.transferTxHash);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('❌ トランザクション失敗:', error);
-      const errorMessage = error.message || 'トランザクションの実行に失敗しました';
+      const errorMessage = error instanceof Error ? error.message : 'トランザクションの実行に失敗しました';
       setJpycPaymentState({
         error: errorMessage,
         isProcessing: false,

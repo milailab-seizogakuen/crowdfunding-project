@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { RewardSelector } from '@/components/RewardSelector';
 import { useBackingContext } from '@/context/BackingContext';
@@ -87,11 +88,12 @@ export default function BackingPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2">
-              <img
+              <Image
                 src="https://i.imgur.com/92eVr1d.jpeg"
                 alt="NEXT RAIL"
+                width={112}
+                height={56}
                 className="h-14 w-auto"
-                style={{ aspectRatio: '2 / 1' }}
               />
             </Link>
             <Link href="/" className="text-gray-600 hover:text-gray-900 font-medium">

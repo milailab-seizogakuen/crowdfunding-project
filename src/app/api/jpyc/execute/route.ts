@@ -12,12 +12,12 @@ export async function POST(request: Request) {
     try {
       body = await request.json();
       console.log('✅ JSON parsing successful');
-    } catch (jsonError: any) {
-      console.error('❌ JSON Parse Error:', jsonError.message);
+    } catch (jsonError: unknown) {
+      console.error('❌ JSON Parse Error:', jsonError instanceof Error ? jsonError.message : String(jsonError));
       return NextResponse.json({
         success: false,
         error: 'リクエストボディのJSONパースに失敗しました',
-        debug: { step: 'json_parse', error: jsonError.message }
+        debug: { step: 'json_parse', error: jsonError instanceof Error ? jsonError.message : String(jsonError) }
       }, { status: 400 });
     }
 
@@ -199,18 +199,18 @@ export async function POST(request: Request) {
         }
 
         console.log('✅ Signature verified successfully');
-      } catch (verifyError: any) {
-        console.error('❌ Signature verification failed:', verifyError.message);
-        throw new Error(`Signature verification failed: ${verifyError.message}`);
+      } catch (verifyError: unknown) {
+        console.error('❌ Signature verification failed:', verifyError instanceof Error ? verifyError.message : String(verifyError));
+        throw new Error(`Signature verification failed: ${verifyError instanceof Error ? verifyError.message : String(verifyError)}`);
       }
-    } catch (error: any) {
-      console.error('❌ EIP-712 verification error:', error.message);
+    } catch (error: unknown) {
+      console.error('❌ EIP-712 verification error:', error instanceof Error ? error.message : String(error));
       return NextResponse.json({
         success: false,
         error: 'EIP-712 署名の検証に失敗しました',
         debug: {
           step: 'eip712_verification',
-          error: error.message
+          error: error instanceof Error ? error.message : String(error)
         }
       }, { status: 400 });
     }
@@ -240,12 +240,12 @@ export async function POST(request: Request) {
       }
 
       console.log('✅ Nonce matches');
-    } catch (nonceError: any) {
-      console.error('❌ Nonce check error:', nonceError.message);
+    } catch (nonceError: unknown) {
+      console.error('❌ Nonce check error:', nonceError instanceof Error ? nonceError.message : String(nonceError));
       return NextResponse.json({
         success: false,
         error: 'Nonce の確認に失敗しました',
-        debug: { step: 'nonce_check', error: nonceError.message }
+        debug: { step: 'nonce_check', error: nonceError instanceof Error ? nonceError.message : String(nonceError) }
       }, { status: 500 });
     }
 
@@ -288,14 +288,14 @@ export async function POST(request: Request) {
       permitTxHash = permitReceipt.hash;
       console.log('✅ Permit confirmed:', permitTxHash);
       console.log('✅ Permit block number:', permitReceipt.blockNumber);
-    } catch (permitError: any) {
-      console.error('❌ PERMIT EXECUTION ERROR:', permitError.message);
-      console.error('Error reason:', permitError.reason);
-      console.error('Error code:', permitError.code);
+    } catch (permitError: unknown) {
+      console.error('❌ PERMIT EXECUTION ERROR:', permitError instanceof Error ? permitError.message : String(permitError));
+      console.error('Error reason:', (permitError as { reason?: string }).reason);
+      console.error('Error code:', (permitError as { code?: string }).code);
 
       let errorMessage = 'Permit トランザクションの実行に失敗しました';
-      const errorMsg = permitError.message?.toLowerCase() || '';
-      const errorReason = permitError.reason?.toLowerCase() || '';
+      const errorMsg = (permitError instanceof Error ? permitError.message : '').toLowerCase();
+      const errorReason = ((permitError as { reason?: string }).reason || '').toLowerCase();
 
       if (errorMsg.includes('nonce') || errorReason.includes('nonce')) {
         errorMessage = 'Nonce が無効か、既に使用されています';
@@ -310,9 +310,9 @@ export async function POST(request: Request) {
         error: errorMessage,
         debug: {
           step: 'permit',
-          errorMessage: permitError.message,
-          errorReason: permitError.reason,
-          errorCode: permitError.code
+          errorMessage: permitError instanceof Error ? permitError.message : String(permitError),
+          errorReason: (permitError as { reason?: string }).reason,
+          errorCode: (permitError as { code?: string }).code
         }
       }, { status: 500 });
     }
@@ -343,18 +343,18 @@ export async function POST(request: Request) {
       transferTxHash = transferReceipt.hash;
       console.log('✅ TransferFrom confirmed:', transferTxHash);
       console.log('✅ TransferFrom block number:', transferReceipt.blockNumber);
-    } catch (transferError: any) {
-      console.error('❌ TRANSFER EXECUTION ERROR:', transferError.message);
-      console.error('Error reason:', transferError.reason);
-      console.error('Error code:', transferError.code);
+    } catch (transferError: unknown) {
+      console.error('❌ TRANSFER EXECUTION ERROR:', transferError instanceof Error ? transferError.message : String(transferError));
+      console.error('Error reason:', (transferError as { reason?: string }).reason);
+      console.error('Error code:', (transferError as { code?: string }).code);
 
       return NextResponse.json({
         success: false,
         error: 'TransferFrom トランザクションの実行に失敗しました',
         debug: {
           step: 'transferFrom',
-          errorMessage: transferError.message,
-          errorReason: transferError.reason,
+          errorMessage: transferError instanceof Error ? transferError.message : String(transferError),
+          errorReason: (transferError as { reason?: string }).reason,
           permitTxHash
         }
       }, { status: 500 });
@@ -381,20 +381,20 @@ export async function POST(request: Request) {
       }
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('❌ =================================');
     console.error('❌ UNEXPECTED ERROR');
     console.error('❌ =================================');
-    console.error('Error message:', error.message);
-    console.error('Error stack:', error.stack);
+    console.error('Error message:', error instanceof Error ? error.message : String(error));
+    console.error('Error stack:', error instanceof Error ? error.stack : undefined);
 
     return NextResponse.json({
       success: false,
       error: '予期しないエラーが発生しました',
       debug: {
         step: 'catch_all',
-        message: error.message,
-        type: error.constructor.name
+        message: error instanceof Error ? error.message : String(error),
+        type: error instanceof Error ? error.constructor.name : typeof error
       }
     }, { status: 500 });
   }

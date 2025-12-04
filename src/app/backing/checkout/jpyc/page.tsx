@@ -3,6 +3,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useBackingContext } from '@/context/BackingContext';
 import { JPYCPayment } from '@/components/payment/JPYCPayment';
 
@@ -15,7 +16,7 @@ import { JPYCPayment } from '@/components/payment/JPYCPayment';
  */
 export default function JPYCCheckoutPage() {
   const router = useRouter();
-  const { selectedRewards, totalAmount, backer, calculateCheckoutSummary } = useBackingContext();
+  const { selectedRewards, backer, calculateCheckoutSummary } = useBackingContext();
 
   // 手数料込みの金額を計算（JPYCは割引で相殺されるため実質totalAmountと同じ）
   const checkoutSummary = calculateCheckoutSummary('jpyc');
@@ -114,11 +115,12 @@ export default function JPYCCheckoutPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Link href="/" className="flex items-center gap-2">
-                <img
+                <Image
                   src="https://i.imgur.com/92eVr1d.jpeg"
                   alt="NEXT RAIL"
+                  width={112}
+                  height={56}
                   className="h-14 w-auto"
-                  style={{ aspectRatio: '2 / 1' }}
                 />
               </Link>
             </div>

@@ -5,9 +5,11 @@ export const ProjectDetails: React.FC = () => {
   return (
     <div className="space-y-8 text-gray-800">
       {/* Overview Graphic */}
-      <img
+      <Image
         src="https://i.imgur.com/58WNi5e.jpeg"
         alt="18きっぷ遠足プロジェクト概要"
+        width={1200}
+        height={675}
         className="w-full rounded-lg shadow-md mb-6"
       />
 
@@ -81,30 +83,38 @@ export const ProjectDetails: React.FC = () => {
         <p className="text-base leading-relaxed">
           そこからJR日本最西端の鉄道駅である佐世保駅に行き、
         </p>
-        <img
+        <Image
           src="https://assets.st-note.com/img/1763976720-y2semQJ3qfg7hBpTnKWS4Odr.png"
           alt="佐世保駅周辺の地図"
+          width={1200}
+          height={800}
           className="w-full rounded-lg shadow-md my-4"
         />
         <p className="text-base leading-relaxed">
           翌日は長崎市内を観光します。
         </p>
-        <img
+        <Image
           src="https://assets.st-note.com/img/1763976744-A62hiaocKPOY4wXdyvDWG0UH.png"
           alt="長崎市内の地図"
+          width={1200}
+          height={800}
           className="w-full rounded-lg shadow-md my-4"
         />
         <p className="text-base leading-relaxed">
           長崎県は日本の歴史上400年近く世界の玄関口となっていた経緯から通常の旅行では味わえない街の雰囲気を存分に感じることができます。
         </p>
-        <img
+        <Image
           src="https://assets.st-note.com/img/1763976755-vMpqaeHAUtNy4XzVLk3ojrSI.png"
           alt="長崎の街並み"
+          width={1200}
+          height={800}
           className="w-full rounded-lg shadow-md my-4"
         />
-        <img
+        <Image
           src="https://assets.st-note.com/img/1763976765-g9Z5WcYnCBVS3D7aXlMdi8FT.png"
           alt="長崎の歴史的建造物"
+          width={1200}
+          height={800}
           className="w-full rounded-lg shadow-md my-4"
         />
         <p className="text-base leading-relaxed">
@@ -120,17 +130,21 @@ export const ProjectDetails: React.FC = () => {
         <p className="text-base leading-relaxed">
           18きっぷ遠足は2026年で5年目を迎えます。
         </p>
-        <img
+        <Image
           src="https://assets.st-note.com/img/1763976940-6vYNCPIa5t0bJhXVkHO3ZFGE.png"
           alt="過去の18きっぷ遠足の様子"
+          width={1200}
+          height={800}
           className="w-full rounded-lg shadow-md my-4"
         />
         <p className="text-base leading-relaxed">
           初めは2~3人くらいの規模での開催でありましたが、その人数は徐々に増え、多いときで15名の子どもたちが参加していました。
         </p>
-        <img
+        <Image
           src="https://assets.st-note.com/img/1763976856-6SfnPQkmXEJzH0AOKYLopZ1G.png"
           alt="多くの子どもたちが参加している様子"
+          width={1200}
+          height={800}
           className="w-full rounded-lg shadow-md my-4"
         />
         <p className="text-base leading-relaxed">
@@ -241,9 +255,11 @@ export const ProjectDetails: React.FC = () => {
         <p className="text-base leading-relaxed">
           平戸は日本本土最西端の鉄道駅がある場所で、広大な大陸だなによって豊かな漁場となっている東シナ海で採れた美味しい海産物をお送りいたします。
         </p>
-        <img
+        <Image
           src="https://i.imgur.com/cyb6OBC.png"
           alt="平戸の海産物"
+          width={1200}
+          height={800}
           className="w-full rounded-lg shadow-md my-4"
         />
         <p className="text-base leading-relaxed">
@@ -252,9 +268,11 @@ export const ProjectDetails: React.FC = () => {
         <p className="text-base leading-relaxed">
           また畜産物のリターンについては、近江牛と並んで日本最古の平戸牛をお届けいたします。
         </p>
-        <img
+        <Image
           src="https://i.imgur.com/e9DcNR0.png"
           alt="平戸牛"
+          width={1200}
+          height={800}
           className="w-full rounded-lg shadow-md my-4"
         />
         <p className="text-base leading-relaxed">
@@ -263,9 +281,11 @@ export const ProjectDetails: React.FC = () => {
         <p className="text-base leading-relaxed">
           長崎県民以外知らない秘密のお土産、カスドースをお届け予定！
         </p>
-        <img
+        <Image
           src="https://i.imgur.com/IhyLf8k.jpeg"
           alt="カスドース"
+          width={1200}
+          height={800}
           className="w-full rounded-lg shadow-md my-4"
         />
       </section>

@@ -3,13 +3,13 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useBackingContext } from '@/context/BackingContext';
 
 export default function BankCheckoutPage() {
   const router = useRouter();
   const {
     selectedRewards,
-    totalAmount,
     backer,
     hasShippingRequirement,
     calculateCheckoutSummary,
@@ -33,11 +33,12 @@ export default function BankCheckoutPage() {
         <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <Link href="/" className="flex items-center gap-2">
-              <img
+              <Image
                 src="https://i.imgur.com/92eVr1d.jpeg"
                 alt="NEXT RAIL"
+                width={112}
+                height={56}
                 className="h-14 w-auto"
-                style={{ aspectRatio: '2 / 1' }}
               />
             </Link>
           </div>
@@ -142,11 +143,12 @@ export default function BankCheckoutPage() {
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <Link href="/" className="flex items-center gap-2">
-            <img
+            <Image
               src="https://i.imgur.com/92eVr1d.jpeg"
               alt="NEXT RAIL"
+              width={112}
+              height={56}
               className="h-14 w-auto"
-              style={{ aspectRatio: '2 / 1' }}
             />
           </Link>
         </div>

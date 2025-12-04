@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
       notes: `PayPal Payment - Order ID: ${orderId}`,
     };
 
-    const backingItems = selectedRewards.map((reward: any) => ({
+    const backingItems = selectedRewards.map((reward: { reward_id: string; quantity: number; unit_price: number }) => ({
       reward_id: reward.reward_id,
       quantity: reward.quantity,
       unit_price: reward.unit_price,

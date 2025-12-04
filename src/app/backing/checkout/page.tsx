@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useBackingContext } from '@/context/BackingContext';
 
@@ -213,11 +214,12 @@ export default function CheckoutPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Link href="/" className="flex items-center gap-2">
-                <img
+                <Image
                   src="https://i.imgur.com/92eVr1d.jpeg"
                   alt="NEXT RAIL"
+                  width={112}
+                  height={56}
                   className="h-14 w-auto"
-                  style={{ aspectRatio: '2 / 1' }}
                 />
               </Link>
             </div>

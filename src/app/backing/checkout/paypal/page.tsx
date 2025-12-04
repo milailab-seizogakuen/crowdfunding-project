@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useEffect, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useBackingContext } from '@/context/BackingContext';
 import { PayPalCheckout } from '@/components/PayPalCheckout';
 
@@ -13,7 +14,6 @@ import { PayPalCheckout } from '@/components/PayPalCheckout';
  * - 決済後に確認ページへ遷移
  */
 function PayPalCheckoutContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const { selectedRewards, totalAmount: contextAmount, backer } = useBackingContext();
 
@@ -58,11 +58,12 @@ function PayPalCheckoutContent() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Link href="/" className="flex items-center gap-2">
-                <img
+                <Image
                   src="https://i.imgur.com/92eVr1d.jpeg"
                   alt="NEXT RAIL"
+                  width={112}
+                  height={56}
                   className="h-14 w-auto"
-                  style={{ aspectRatio: '2 / 1' }}
                 />
               </Link>
             </div>

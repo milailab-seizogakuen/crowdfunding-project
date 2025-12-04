@@ -91,11 +91,12 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <img
+              <Image
                 src="https://i.imgur.com/92eVr1d.jpeg"
                 alt="NEXT RAIL"
+                width={112}
+                height={56}
                 className="h-14 w-auto"
-                style={{ aspectRatio: '2 / 1' }}
               />
             </div>
             <nav className="hidden md:flex gap-8">
@@ -164,9 +165,11 @@ export default function Home() {
                 👤 プロジェクト主催者
               </h2>
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
-                <img
+                <Image
                   src="https://cdn.peatix.com/event/4565825/cover-iRRhNjQPGOLTmCvVjhosZGcniKWs6kBm.png"
                   alt={projectInfo.organizerName}
+                  width={96}
+                  height={96}
                   className="w-24 h-24 rounded-full object-cover border-4 border-orange-200"
                 />
                 <div className="text-center sm:text-left">
@@ -253,11 +256,12 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div>
-              <img
+              <Image
                 src="https://i.imgur.com/xrwq829.png"
                 alt="NEXT RAIL"
+                width={96}
+                height={48}
                 className="h-12 w-auto mb-4"
-                style={{ aspectRatio: '2 / 1' }}
               />
               <p className="text-sm">
                 AI時代における、「人間にしかできないこと」を探求する旅プロジェクト。
