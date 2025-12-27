@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { RewardData } from '@/types/backing';
 import { formatCurrency } from '@/utils/formatting';
 
@@ -9,6 +10,7 @@ interface RewardCardProps {
   reward: RewardData;
   backerCount?: number;
   onSelect: (reward: RewardData, quantity: number) => void;
+  navigateOnSelect?: boolean;
 }
 
 /**
@@ -19,12 +21,17 @@ export const RewardCard: React.FC<RewardCardProps> = ({
   reward,
   backerCount,
   onSelect,
+  navigateOnSelect = false,
 }) => {
+  const router = useRouter();
   const [quantity, setQuantity] = useState(1);
 
   const handleSelect = () => {
     onSelect(reward, quantity);
     setQuantity(1); // リセット
+    if (navigateOnSelect) {
+      router.push('/backing');
+    }
   };
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -9,13 +9,14 @@ import { formatCurrency } from '@/utils/formatting';
 interface RewardSelectorProps {
   rewards: RewardData[];
   rewardStats?: Record<string, number>;
+  navigateOnSelect?: boolean;
 }
 
 /**
  * RewardSelector コンポーネント
  * リターン一覧を表示し、複数選択可能にする（For Good 風デザイン）
  */
-export const RewardSelector: React.FC<RewardSelectorProps> = ({ rewards, rewardStats }) => {
+export const RewardSelector: React.FC<RewardSelectorProps> = ({ rewards, rewardStats, navigateOnSelect }) => {
   const { addReward, selectedRewards, removeReward } = useBackingContext();
 
   const handleSelectReward = (reward: RewardData, quantity: number) => {
@@ -84,6 +85,7 @@ export const RewardSelector: React.FC<RewardSelectorProps> = ({ rewards, rewardS
               reward={reward}
               backerCount={rewardStats?.[reward.reward_id]}
               onSelect={handleSelectReward}
+              navigateOnSelect={navigateOnSelect}
             />
           ))}
         </div>

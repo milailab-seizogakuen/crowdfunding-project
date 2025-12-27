@@ -240,14 +240,14 @@ export default function Home() {
 
             {/* RewardSelector コンポーネント */}
             <div id="rewards">
-              {rewards.length > 0 && <RewardSelector rewards={rewards} />}
+              {rewards.length > 0 && <RewardSelector rewards={rewards} navigateOnSelect={true} />}
             </div>
           </div>
         </div>
 
         {/* リターン一覧（モバイル表示用） */}
         <div className="lg:hidden mt-8" id="rewards">
-          {rewards.length > 0 && <RewardSelector rewards={rewards} />}
+          {rewards.length > 0 && <RewardSelector rewards={rewards} navigateOnSelect={true} />}
         </div>
       </main>
 
