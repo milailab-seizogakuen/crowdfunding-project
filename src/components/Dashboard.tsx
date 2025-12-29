@@ -10,17 +10,42 @@ interface DashboardProps {
 }
 
 /**
+ * 残り時間を計算して表示用のテキストを返す
+ */
+const calculateRemainingTime = (): { value: number; unit: string; isEnded: boolean } => {
+  const now = new Date().getTime();
+  const diffMs = PROJECT_END_DATE - now;
+
+  if (diffMs <= 0) {
+    return { value: 0, unit: '', isEnded: true };
+  }
+
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  // 残り2日以上: 「残り○日」
+  if (diffDays >= 2) {
+    return { value: diffDays, unit: '日', isEnded: false };
+  }
+  // 残り1日〜24時間: 「残り○時間」
+  if (diffHours >= 1) {
+    return { value: diffHours, unit: '時間', isEnded: false };
+  }
+  // 残り1時間未満: 「残り○分」
+  return { value: diffMinutes, unit: '分', isEnded: false };
+};
+
+/**
  * Dashboard コンポーネント
  * クラウドファンディングの進捗を表示（For Good 風デザイン）
  */
 export const Dashboard: React.FC<DashboardProps> = ({ data }) => {
-  const [daysLeft, setDaysLeft] = useState(0);
+  const [remainingTime, setRemainingTime] = useState(() => calculateRemainingTime());
 
   useEffect(() => {
     const updateCountdown = () => {
-      const now = new Date().getTime();
-      const remaining = Math.ceil((PROJECT_END_DATE - now) / (1000 * 60 * 60 * 24));
-      setDaysLeft(Math.max(0, remaining));
+      setRemainingTime(calculateRemainingTime());
     };
 
     updateCountdown(); // 初回実行
@@ -76,7 +101,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ data }) => {
           </div>
         </div>
 
-        {/* 残り日数 */}
+        {/* 残り時間 */}
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
@@ -84,10 +109,19 @@ export const Dashboard: React.FC<DashboardProps> = ({ data }) => {
             </svg>
           </div>
           <div>
-            <p className="text-xs text-gray-500 font-bold">残り</p>
-            <p className="text-3xl font-bold text-gray-900">
-              {daysLeft}<span className="text-lg font-normal text-gray-500 ml-1">日</span>
-            </p>
+            {remainingTime.isEnded ? (
+              <>
+                <p className="text-xs text-gray-500 font-bold">ステータス</p>
+                <p className="text-3xl font-bold text-gray-500">終了</p>
+              </>
+            ) : (
+              <>
+                <p className="text-xs text-gray-500 font-bold">残り</p>
+                <p className="text-3xl font-bold text-gray-900">
+                  {remainingTime.value}<span className="text-lg font-normal text-gray-500 ml-1">{remainingTime.unit}</span>
+                </p>
+              </>
+            )}
           </div>
         </div>
       </div>

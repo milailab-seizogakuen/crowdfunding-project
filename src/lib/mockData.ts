@@ -235,7 +235,7 @@ export const mockRewards: RewardData[] = [
 /**
  * プロジェクト終了日時（2025年12月28日 23:59:59）
  */
-export const PROJECT_END_DATE = new Date('2025-12-28T23:59:59').getTime();
+export const PROJECT_END_DATE = new Date('2025-12-29T23:59:59').getTime();
 
 /**
  * モックダッシュボードデータ
