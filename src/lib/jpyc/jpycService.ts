@@ -1,6 +1,6 @@
 // src/lib/jpyc/jpycService.ts
 
-import { Contract, BrowserProvider, isAddress, TypedDataEncoder } from 'ethers';
+import { Contract, Provider, isAddress, TypedDataEncoder } from 'ethers';
 import { JPYC_ABI } from './abi';
 
 const JPYC_TOKEN_ADDRESS = process.env.NEXT_PUBLIC_JPYC_TOKEN_ADDRESS || '0xE7C3D8C9a439feDe00D2600032D5dB0Be71C3c29';
@@ -14,7 +14,7 @@ interface PermitSignatureResult {
 }
 
 export const jpycService = {
-  async getBalance(account: string, provider: BrowserProvider): Promise<string> {
+  async getBalance(account: string, provider: Provider): Promise<string> {
     try {
       const contract = new Contract(JPYC_TOKEN_ADDRESS, JPYC_ABI, provider);
 
@@ -169,7 +169,7 @@ export const jpycService = {
     }
   },
 
-  async allowance(owner: string, spender: string, provider: BrowserProvider): Promise<string> {
+  async allowance(owner: string, spender: string, provider: Provider): Promise<string> {
     try {
       const contract = new Contract(JPYC_TOKEN_ADDRESS, JPYC_ABI, provider);
 

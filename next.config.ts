@@ -11,9 +11,9 @@ const nextConfig: NextConfig = {
   },
 
   // Turbopack を使わせない（Next.js公式の回避策）
-  experimental: {
-    webpackBuildWorker: false,
-  },
+  // experimental: {
+  //   webpackBuildWorker: false,
+  // },
 
   // Webpack利用をサーバー側でも完全に固定化
   modularizeImports: {},

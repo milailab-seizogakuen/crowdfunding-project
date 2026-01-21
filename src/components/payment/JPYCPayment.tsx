@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { JsonRpcSigner } from 'ethers';
 import { useAccount, useWalletClient } from 'wagmi';
 import { jpycService } from '@/lib/jpyc/jpycService';
 import { useBackingContext } from '@/context/BackingContext';
@@ -34,7 +35,7 @@ export const JPYCPayment: React.FC<JPYCPaymentProps> = ({
   // 3. useState hooks
   const [isSigningOrSubmitting, setIsSigningOrSubmitting] = useState(false);
   const [deadline, setDeadline] = useState<number | null>(null);
-  const [signer, setSigner] = useState<{ provider?: unknown } | null>(null);
+  const [signer, setSigner] = useState<JsonRpcSigner | null>(null);
   const [web3Error, setWeb3Error] = useState<string | null>(null);
   const [balance, setBalance] = useState<string | null>(null);
   const [isLoadingBalance, setIsLoadingBalance] = useState(false);
